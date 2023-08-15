@@ -209,5 +209,5 @@ class LightGbmRegressor(
             seed=self.random_state,
             parallel_trainer=self.parallel_trainer)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

@@ -29,7 +29,7 @@ scores = ensemble_with_defaults.predict(X_test)
 scores = pd.to_numeric(scores)
 
 # evaluate the model
-print('Accuracy:', np.mean(y_test == [i for i in scores]))
+print('Accuracy:', np.mean(y_test == list(scores)))
 # Accuracy: 0.9473684210526315
 
 
@@ -49,5 +49,5 @@ scores = pd.to_numeric(scores)
 # note that accuracy is lower than with defaults as this is a small dataset
 # that we partition into 3 chunks for each classifier, which decreases model
 # quality.
-print('Accuracy:', np.mean(y_test == [i for i in scores]))
+print('Accuracy:', np.mean(y_test == list(scores)))
 # Accuracy: 0.5789473684210527

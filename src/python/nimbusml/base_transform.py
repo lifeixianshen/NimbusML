@@ -97,6 +97,6 @@ class BaseTransform(BaseEstimator, BasePipelineItem):
         compare_shape(self, X)
 
         pipeline = Pipeline(model=self.model_)
-        data = pipeline.transform(
-            X, as_binary_data_stream=as_binary_data_stream, **params)
-        return data
+        return pipeline.transform(
+            X, as_binary_data_stream=as_binary_data_stream, **params
+        )

@@ -113,8 +113,8 @@ def gbdt(
             none_acceptable=True,
             is_of_type=numbers.Real, valid_range={'Min': 0.0})
 
-    component = Component(
+    return Component(
         name=entrypoint_name,
         settings=settings,
-        kind='BoosterParameterFunction')
-    return component
+        kind='BoosterParameterFunction',
+    )

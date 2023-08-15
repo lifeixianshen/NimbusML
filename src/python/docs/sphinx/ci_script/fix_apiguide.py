@@ -21,7 +21,7 @@ def createlinktoyaml(m):
     paths = cpath.split('/')
     paths[-1] = cname
     link = '.'.join(paths)
-    return '[`{}`]({})'.format(cname, "xref:" + link)
+    return f'[`{cname}`](xref:{link})'
 
 
 print('[fix_apiguide] Starting')
@@ -50,7 +50,7 @@ print('[fix_apiguide] Done')
 fnames = ['types.md', 'datasources.md', 'columns.md', 'roles.md', 'schema.md',
           os.path.join('..', 'loadsavemodels.md')]
 for fname in fnames:
-    print('[fix_highlight_{}] Starting'.format(fname))
+    print(f'[fix_highlight_{fname}] Starting')
     fname = os.path.join(
         os.path.normpath(__file__),
         '..',
@@ -71,4 +71,4 @@ for fname in fnames:
                         line = line.replace('```', '```py')
                 count += 1
             outfile.write(line)
-    print('[fix_highlight_{}] Done'.format(fname))
+    print(f'[fix_highlight_{fname}] Done')

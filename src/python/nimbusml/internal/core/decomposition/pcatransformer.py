@@ -100,13 +100,12 @@ class PcaTransformer(BasePipelineItem, DefaultSignatureWithRoles):
                 list) and len(input_columns) > 1:
             # We concatenate the columns.
             data = all_args.pop("data")
-            outcol = "temp_%s" % str(id(self))
+            outcol = f"temp_{id(self)}"
             if isinstance(output_columns, list):
                 if len(output_columns) == 1:
                     outcol = output_columns[0]
-            output_data = "%s_c%s" % (
-                all_args['output_data'], str(id(self)))
-            model = "%s_c%s" % (all_args['model'], str(id(self)))
+            output_data = f"{all_args['output_data']}_c{id(self)}"
+            model = f"{all_args['model']}_c{id(self)}"
             conc = self._add_concatenator_node(
                 data, input_columns, output_data, outcol, model)
             input_columns = [outcol]
@@ -119,8 +118,8 @@ class PcaTransformer(BasePipelineItem, DefaultSignatureWithRoles):
 
         if not isinstance(input_columns, list):
             raise ValueError(
-                "input has to be a list of strings, instead got %s" %
-                type(input_columns))
+                f"input has to be a list of strings, instead got {type(input_columns)}"
+            )
 
         # validate output
         if output_columns is None:
@@ -128,8 +127,8 @@ class PcaTransformer(BasePipelineItem, DefaultSignatureWithRoles):
 
         if not isinstance(output_columns, list):
             raise ValueError(
-                "output has to be a list of strings, instead got %s" %
-                type(output_columns))
+                f"output has to be a list of strings, instead got {type(output_columns)}"
+            )
 
         algo_args = dict(
             column=[
@@ -147,7 +146,7 @@ class PcaTransformer(BasePipelineItem, DefaultSignatureWithRoles):
             center=self.center,
             seed=self.random_state)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
 
         return [conc, self._entrypoint(
             **all_args)] if conc else self._entrypoint(**all_args)

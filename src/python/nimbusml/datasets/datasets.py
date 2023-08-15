@@ -48,25 +48,21 @@ class DataSet:
         Creation of a new column.
         We add it to the members of the class.
         """
-        if isinstance(value, (list, pandas.Series, numpy.ndarray)):
-            if isinstance(value, pandas.Series):
-                if value.dtype == bool:
-                    value = list(1.0 if x else 0.0 for x in value)
-                elif value.dtype in (numpy.float32, float):
-                    pass
-                else:
-                    raise TypeError(
-                        "Unexpexted type for values {0}".format(
-                            value.dtype))
-            else:
-                raise TypeError(
-                    "You need to convert your container into a "
-                    "pandas.Series")
-            self._new_columns[name] = value
-        else:
+        if not isinstance(value, (list, pandas.Series, numpy.ndarray)):
             raise TypeError(
                 "Unexpected issue with name={0} value type={1}".format(
                     name, type(value)))
+        if not isinstance(value, pandas.Series):
+            raise TypeError(
+                "You need to convert your container into a "
+                "pandas.Series")
+        if value.dtype == bool:
+            value = [1.0 if x else 0.0 for x in value]
+        elif value.dtype not in (numpy.float32, float):
+            raise TypeError(
+                "Unexpexted type for values {0}".format(
+                    value.dtype))
+        self._new_columns[name] = value
 
     def as_df(self):
         """
@@ -298,9 +294,6 @@ class Topics(DataSet):
         Constructor
         """
         DataSet.__init__(self, inst=inst)
-        if inst is None:
-            # self.load()
-            pass
 
     @property
     def name(self):
@@ -324,9 +317,6 @@ class Timeseries(DataSet):
         Constructor
         """
         DataSet.__init__(self, inst=inst)
-        if inst is None:
-            # self.load()
-            pass
 
     @property
     def name(self):
@@ -349,9 +339,6 @@ class WikiDetox_Train(DataSet):
         Constructor
         """
         DataSet.__init__(self, inst=inst)
-        if inst is None:
-            # self.load()
-            pass
 
     @property
     def name(self):
@@ -374,9 +361,6 @@ class WikiDetox_Test(DataSet):
         Constructor
         """
         DataSet.__init__(self, inst=inst)
-        if inst is None:
-            # self.load()
-            pass
 
     @property
     def name(self):
@@ -399,9 +383,6 @@ class FS_Train(DataSet):
         Constructor
         """
         DataSet.__init__(self, inst=inst)
-        if inst is None:
-            # self.load()
-            pass
 
     @property
     def name(self):
@@ -424,9 +405,6 @@ class FS_Test(DataSet):
         Constructor
         """
         DataSet.__init__(self, inst=inst)
-        if inst is None:
-            # self.load()
-            pass
 
     @property
     def name(self):
@@ -450,9 +428,6 @@ class MSLTR_Train(DataSet):
         Constructor
         """
         DataSet.__init__(self, inst=inst)
-        if inst is None:
-            # self.load()
-            pass
 
     @property
     def name(self):
@@ -476,9 +451,6 @@ class MSLTR_Test(DataSet):
         Constructor
         """
         DataSet.__init__(self, inst=inst)
-        if inst is None:
-            # self.load()
-            pass
 
     @property
     def name(self):
@@ -501,8 +473,6 @@ class Uci_Train(DataSet):
         Constructor
         """
         DataSet.__init__(self, inst=inst)
-        if inst is None:
-            pass
 
     @property
     def name(self):
@@ -525,8 +495,6 @@ class Uci_Test(DataSet):
         Constructor
         """
         DataSet.__init__(self, inst=inst)
-        if inst is None:
-            pass
 
     @property
     def name(self):
@@ -549,9 +517,6 @@ class Generated_Twitter_Train(DataSet):
         Constructor
         """
         DataSet.__init__(self, inst=inst)
-        if inst is None:
-            # self.load()
-            pass
 
     @property
     def name(self):
@@ -574,9 +539,6 @@ class Generated_Twitter_Test(DataSet):
         Constructor
         """
         DataSet.__init__(self, inst=inst)
-        if inst is None:
-            # self.load()
-            pass
 
     @property
     def name(self):
@@ -599,9 +561,6 @@ class Generated_Ticket_Train(DataSet):
         Constructor
         """
         DataSet.__init__(self, inst=inst)
-        if inst is None:
-            # self.load()
-            pass
 
     @property
     def name(self):
@@ -624,9 +583,6 @@ class Generated_Ticket_Test(DataSet):
         Constructor
         """
         DataSet.__init__(self, inst=inst)
-        if inst is None:
-            # self.load()
-            pass
 
     @property
     def name(self):
@@ -680,12 +636,11 @@ def get_dataset(name):
     """
     if name in _datasets:
         return _datasets[name]()
-    else:
-        available_dataset = ", ".join(sorted(_datasets.keys()))
-        raise KeyError(
-            "Unable to find dataset '{0}'. "
-            "The available options are: {1}.".format(
-                name, available_dataset))
+    available_dataset = ", ".join(sorted(_datasets.keys()))
+    raise KeyError(
+        "Unable to find dataset '{0}'. "
+        "The available options are: {1}.".format(
+            name, available_dataset))
 
 
 def available_datasets():

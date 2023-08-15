@@ -18,8 +18,8 @@ def all_selector(
     entrypoint_name = 'AllSelector'
     settings = {}
 
-    component = Component(
+    return Component(
         name=entrypoint_name,
         settings=settings,
-        kind='EnsembleRegressionSubModelSelector')
-    return component
+        kind='EnsembleRegressionSubModelSelector',
+    )

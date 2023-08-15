@@ -582,8 +582,6 @@ def fast_tree_ranking(
             none_acceptable=True,
             is_of_type=numbers.Real)
 
-    component = Component(
-        name=entrypoint_name,
-        settings=settings,
-        kind='FastTreeTrainer')
-    return component
+    return Component(
+        name=entrypoint_name, settings=settings, kind='FastTreeTrainer'
+    )

@@ -4,9 +4,7 @@ import pandas as pd
 from nimbusml.timeseries import IidChangePointDetector
 
 # Create a sample series with a change
-input_data = [5, 5, 5, 5, 5, 5, 5, 5]
-input_data.extend([7, 7, 7, 7, 7, 7, 7, 7])
-
+input_data = [5, 5, 5, 5, 5, 5, 5, 5, 7, 7, 7, 7, 7, 7, 7, 7]
 X_train = pd.Series(input_data, name="ts")
 
 cpd = IidChangePointDetector(confidence=95, change_history_length=4) << {'result': 'ts'}

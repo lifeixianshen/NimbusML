@@ -37,8 +37,6 @@ def fixed_platt_calibrator(
             none_acceptable=True,
             is_of_type=numbers.Real)
 
-    component = Component(
-        name=entrypoint_name,
-        settings=settings,
-        kind='CalibratorTrainer')
-    return component
+    return Component(
+        name=entrypoint_name, settings=settings, kind='CalibratorTrainer'
+    )

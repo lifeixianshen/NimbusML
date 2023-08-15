@@ -18,8 +18,8 @@ def voting(
     entrypoint_name = 'Voting'
     settings = {}
 
-    component = Component(
+    return Component(
         name=entrypoint_name,
         settings=settings,
-        kind='EnsembleBinaryOutputCombiner')
-    return component
+        kind='EnsembleBinaryOutputCombiner',
+    )

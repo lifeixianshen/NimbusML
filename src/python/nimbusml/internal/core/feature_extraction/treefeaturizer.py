@@ -76,5 +76,5 @@ class TreeFeaturizer(BasePipelineItem, DefaultSignature):
             suffix=self.suffix,
             label_permutation_seed=self.label_permutation_seed)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

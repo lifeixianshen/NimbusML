@@ -57,8 +57,8 @@ def best_performance_selector(
             none_acceptable=True,
             is_of_type=numbers.Real)
 
-    component = Component(
+    return Component(
         name=entrypoint_name,
         settings=settings,
-        kind='EnsembleBinarySubModelSelector')
-    return component
+        kind='EnsembleBinarySubModelSelector',
+    )

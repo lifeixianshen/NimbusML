@@ -273,9 +273,9 @@ class BasePipelineItem():
         # Default options for output columns. Depends on the model.
         self.output = None
         sig_params = signature(self._entrypoint).parameters
-        self._allowed_roles = set(
-            r for r in DataRoles._allowed if
-            Role.to_attribute(r) in sig_params)
+        self._allowed_roles = {
+            r for r in DataRoles._allowed if Role.to_attribute(r) in sig_params
+        }
         # Basic checking on parameters.
         for k, v in params.items():
             if '_num_' in k and not isinstance(v, (int, float)):
@@ -358,9 +358,7 @@ class BasePipelineItem():
         role must be suffixed by `_column`.
         """
         value = getattr(self, role, None)
-        if value is None:
-            return all_args.get(role, None)
-        return value
+        return all_args.get(role, None) if value is None else value
 
     @abstractmethod
     def _get_node(self, **params):
@@ -479,10 +477,7 @@ class BasePipelineItem():
         if self._use_single_input_as_string():
             return 'si'
         sign = signature(self._entrypoint)
-        for p in sign.parameters:
-            if p == "source":
-                return 'ns'
-        return "io"
+        return next(('ns' for p in sign.parameters if p == "source"), "io")
 
     def _check_roles(self):
         """
@@ -495,26 +490,25 @@ class BasePipelineItem():
         for role in DataRoles._allowed:
             attr = DataRoles.to_attribute(role)
             if hasattr(self, attr) and getattr(self, attr) is not None and \
-                    attr not in params:
-                if role == Role.Label:
-                    # warnings instead of an exception but we should
-                    # really simplify the logic
-                    # in experiment.py. The model should know which
-                    # roles it supports.
-                    # current code makes it difficult to guess.
-                    # A minor modification in entrypoints.py should do the
-                    # trick.
-                    if self.type not in {"clusterer", "anomaly"} :
-                        warnings.warn(
-                            "Model '{0}' (type='{1}') does not support "
-                            "role '{2}' (for developers, check "
-                            "_allowed_roles is defined).".format(
-                                type(self), self.type, role))
-                else:
+                        attr not in params:
+                if role != Role.Label:
                     raise RuntimeError(
                         "Model '{0}' (type='{1}') does not support role "
                         "'{2}' (for developers, check _allowed_roles is "
                         "defined).".format(
+                            type(self), self.type, role))
+                # warnings instead of an exception but we should
+                # really simplify the logic
+                # in experiment.py. The model should know which
+                # roles it supports.
+                # current code makes it difficult to guess.
+                # A minor modification in entrypoints.py should do the
+                # trick.
+                if self.type not in {"clusterer", "anomaly"} :
+                    warnings.warn(
+                        "Model '{0}' (type='{1}') does not support "
+                        "role '{2}' (for developers, check "
+                        "_allowed_roles is defined).".format(
                             type(self), self.type, role))
 
     def _use_role(self, name):
@@ -645,10 +639,12 @@ class BasePipelineItem():
         :param early: set inputs from the constructor, object type is
         unknown
         """
-        if isinstance(inp, (list, tuple, dict)):
-            if len(inp) == 0:
-                raise ValueError("inp is empty")
-        elif inp in (None, ''):
+        if (
+            isinstance(inp, (list, tuple, dict))
+            and len(inp) == 0
+            or not isinstance(inp, (list, tuple, dict))
+            and inp in (None, '')
+        ):
             raise ValueError("inp is empty")
         if self.type not in ('transform', None):
             if isinstance(inp, dict):
@@ -725,7 +721,7 @@ class BasePipelineItem():
             # Couple input, output
             attr = 'input'
             if isinstance(inp, dict):
-                couples = [(k, v) for k, v in inp.items()]
+                couples = list(inp.items())
                 self._add_attribute(attr, [v for k, v in couples])
                 self._set_outputs([k for k, v in couples])
             elif isinstance(inp, list):
@@ -736,7 +732,7 @@ class BasePipelineItem():
                         res.append(v)
                     elif isinstance(v, (
                             DataStream, ViewDataStream)) and \
-                            not is_string_or_tuple:
+                                not is_string_or_tuple:
                         res.append([c.Name for c in inp.schema])
                     elif isinstance(v, (str, tuple)):
                         is_string_or_tuple = True
@@ -769,7 +765,7 @@ class BasePipelineItem():
                 self._add_attribute(attr, [inp], input=True)
                 self._set_outputs([inp])
             elif isinstance(inp, dict):
-                couples = [(k, v) for k, v in inp.items()]
+                couples = list(inp.items())
                 self._add_attribute(attr, [v for k, v in couples],
                                     input=True)
                 self._set_outputs([k for k, v in couples])
@@ -792,22 +788,14 @@ class BasePipelineItem():
                          'ranker', 'clustering', 'anomaly'}:
             self.feature_column_name = getattr(self, attr)
             if not isinstance(self.feature_column_name, (str, tuple)):
-                if isinstance(self.feature_column_name, list):
-                    if len(self.feature_column_name) == 1:
-                        self.feature_column_name = self.feature_column_name[0]
-                    else:
-                        # Experiment will merge them.
-                        # raise RuntimeError("Too many feature columns.
-                        # Use ConcatTransform to merge them: "
-                        #     " ConcatTransform() % {0} >
-                        # Role.Feature".format(self.feature_column_name))
-                        pass
-                else:
+                if not isinstance(self.feature_column_name, list):
                     raise TypeError(
                         "Feature column type is unexpected: {0}".format(
                             type(
                                 self.feature_column_name)))
 
+                if len(self.feature_column_name) == 1:
+                    self.feature_column_name = self.feature_column_name[0]
         self._attr_input = attr
         self._check_inputs()
         return self
@@ -819,14 +807,13 @@ class BasePipelineItem():
         """
         if role is None:
             return hasattr(self, '_attr_input') or \
-                   (hasattr(self,
+                       (hasattr(self,
                             '_columns') and self._columns is not None) or \
-                   (hasattr(self, 'output') and self.output is not None) \
-                   or \
-                   (hasattr(self, 'input') and self.input is not None)
-        else:
-            attr = Role.to_attribute(role)
-            return hasattr(self, attr)
+                       (hasattr(self, 'output') and self.output is not None) \
+                       or \
+                       (hasattr(self, 'input') and self.input is not None)
+        attr = Role.to_attribute(role)
+        return hasattr(self, attr)
 
     def _set_role(self, role_column, role=Role.Label):
         """
@@ -881,19 +868,18 @@ class BasePipelineItem():
                     "This learner or transform (type: '{0}') does not "
                     "use role '{1}'.".format(
                         self.type, role))
-            if isinstance(role_column, (str, tuple, list)):
-                attr = DataRoles.to_attribute(role)
-                if ':' in role_column or ':' in attr:
-                    raise ValueError(
-                        "Cannot set '{0}' to '{1}'".format(
-                            attr, role_column))
-                self._add_attribute(attr, role_column)
-            else:
+            if not isinstance(role_column, (str, tuple, list)):
                 raise TypeError(
                     "role_column should be something like 'column_name' "
                     "or ('column_name', slots) not {0}".format(
                         role_column))
 
+            attr = DataRoles.to_attribute(role)
+            if ':' in role_column or ':' in attr:
+                raise ValueError(
+                    "Cannot set '{0}' to '{1}'".format(
+                        attr, role_column))
+            self._add_attribute(attr, role_column)
         return self
 
     @property
@@ -960,10 +946,6 @@ class BasePipelineItem():
             if hasattr(node, '_attr_output'):
                 setattr(node, node._attr_input,
                         getattr(node, node._attr_output))
-        else:
-            # No columns specified. The user plans to fit the pipeline as
-            # fit(X, y).
-            pass
         return self
 
     def _add_concatenator_node(

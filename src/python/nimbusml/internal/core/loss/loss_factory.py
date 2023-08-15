@@ -60,37 +60,30 @@ class _LossFactory:
 
     @classmethod
     def _get_ep(cls, ep_function, params):
-        assert ep_function in cls.available_losses, '%s is not imported' \
-                                                    % ep_function
+        assert ep_function in cls.available_losses, f'{ep_function} is not imported'
         ep_function = cls.available_losses[ep_function]
-        if params:
-            ep_loss = ep_function(**params)
-        else:
-            ep_loss = ep_function()
-        return ep_loss
+        return ep_function(**params) if params else ep_function()
 
     @classmethod
     def create_loss(cls, component_kind, learner, api_loss):
         if cls.loss_table is None:
             cls._load_table()
 
-        assert component_kind in cls.valid_component_kinds, \
-            '%s component kind does not exist in loss table' % \
-            component_kind
+        assert (
+            component_kind in cls.valid_component_kinds
+        ), f'{component_kind} component kind does not exist in loss table'
 
         component_kind_losses = cls.loss_table[component_kind]
         valid_str_losses = cls.valid_loss_str_per_kind[component_kind]
 
         error_msg = (
-                "{} does not support '{}' as loss. The supported values "
-                "are {} and their class variants. " +
-                "Please see the documentation page for more "
-                "information.").format(
-            learner,
-            api_loss,
-            ', '.join(
-                [
-                    "'{}'".format(s) for s in valid_str_losses]))
+            "{} does not support '{}' as loss. The supported values "
+            "are {} and their class variants. "
+            + "Please see the documentation page for more "
+            "information."
+        ).format(
+            learner, api_loss, ', '.join([f"'{s}'" for s in valid_str_losses])
+        )
 
         if isinstance(api_loss, str):
             api_loss_name = api_loss
@@ -106,10 +99,7 @@ class _LossFactory:
         if api_loss_name not in valid_str_losses:
             raise TypeError(error_msg)
 
-        ep_loss = cls._get_ep(
-            component_kind_losses[api_loss_name],
-            api_loss_params)
-        return ep_loss
+        return cls._get_ep(component_kind_losses[api_loss_name], api_loss_params)
 
 
 def create_loss(component_kind, learner, api_loss):

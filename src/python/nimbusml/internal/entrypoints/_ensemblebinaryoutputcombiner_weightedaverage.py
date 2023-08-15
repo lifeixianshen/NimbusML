@@ -35,8 +35,8 @@ def weighted_average(
                 'NegPrecision',
                 'NegRecall'])
 
-    component = Component(
+    return Component(
         name=entrypoint_name,
         settings=settings,
-        kind='EnsembleBinaryOutputCombiner')
-    return component
+        kind='EnsembleBinaryOutputCombiner',
+    )

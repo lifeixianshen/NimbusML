@@ -9,6 +9,7 @@ section in yaml format and update it in the toc.yml.
 The "- href" will be pointing to the yml files in the docs-ref-autogen
 folder.
 """
+
 import argparse
 import os
 import re
@@ -22,65 +23,61 @@ if __name__ == '__main__':
 
     args = vars(parser.parse_args())
 
-    file_r = open(args['input'], "r")
-    file_w = open(args['temp'], "w")
+    with open(args['input'], "r") as file_r:
+        file_w = open(args['temp'], "w")
 
-    ref_dict = {'API/Reference': ('modules.md', [])}
+        ref_dict = {'API/Reference': ('modules.md', [])}
 
-    previous_level = 0
-    processing_start = False
-    for line in file_r:
-        if '[API/Reference]' in line:
-            processing_start = True
-        if '[Tutorials]' in line:
-            break
-        if processing_start:
-            current_level = line.find('*') / 2
-            if current_level >= 0:
-                #            print(line)
-                #            print(current_level)
-                if 'nimbusml.' in line:
-                    name = re.search('(?<=\[\*)(.*)(?=\*\])', line)
-                    if not name:
-                        name = re.search(
-                            '(?<=\[\*)(.*)(?=\*\:)', line).group(0)
+        previous_level = 0
+        processing_start = False
+        for line in file_r:
+            if '[API/Reference]' in line:
+                processing_start = True
+            if '[Tutorials]' in line:
+                break
+            if processing_start:
+                current_level = line.find('*') / 2
+                if current_level >= 0:
+                                    #            print(line)
+                                    #            print(current_level)
+                    if 'nimbusml.' in line:
+                        name = re.search('(?<=\[\*)(.*)(?=\*\])', line)
+                        name = (
+                            re.search('(?<=\[\*)(.*)(?=\*\:)', line)[0]
+                            if not name
+                            else name[0]
+                        )
+                        path = 'docs-ref-autogen\\' + name + '.yml'
                     else:
-                        name = name.group(0)
-                    path = 'docs-ref-autogen\\' + name + '.yml'
-                else:
-                    name = re.search('(?<=\[)(.*)(?=\])', line).group(0)
-                    path = re.search('(?<=\()(.*)(?=\))', line).group(0)
+                        name = re.search('(?<=\[)(.*)(?=\])', line)[0]
+                        path = re.search('(?<=\()(.*)(?=\))', line)[0]
 
-                if current_level > previous_level:
+                    if current_level > previous_level:
+                        file_w.write(
+                            '  ' * int(previous_level) + '  items: ' + '\n')
+                    file_w.write('  ' * int(current_level) +
+                                 '- name: ' + name.split('.')[-1] + '\n')
                     file_w.write(
-                        '  ' * int(previous_level) + '  items: ' + '\n')
-                file_w.write('  ' * int(current_level) +
-                             '- name: ' + name.split('.')[-1] + '\n')
-                file_w.write(
-                    '  ' *
-                    int(current_level) +
-                    '  href: ' +
-                    path +
-                    '\n')
-                previous_level = current_level
-    file_r.close()
+                        '  ' *
+                        int(current_level) +
+                        '  href: ' +
+                        path +
+                        '\n')
+                    previous_level = current_level
     file_w.close()
 
     import yaml
 
     file_w = args['output']
-    stream = open(file_w, 'r')
-    data = yaml.load(stream)
-    data[-1]
+    with open(file_w, 'r') as stream:
+        data = yaml.load(stream)
+        data[-1]
 
-    file_r = args['temp']
-    stream_r = open(file_r, 'r')
-    data_r = yaml.load(stream_r)
-    data[-1] = data_r[-1]
+        file_r = args['temp']
+        with open(file_r, 'r') as stream_r:
+            data_r = yaml.load(stream_r)
+            data[-1] = data_r[-1]
 
-    with open(file_w, 'w') as yaml_file:
-        yaml_file.write(yaml.dump(data, default_flow_style=False))
-    stream_r.close()
-    stream.close()
-
+            with open(file_w, 'w') as yaml_file:
+                yaml_file.write(yaml.dump(data, default_flow_style=False))
     os.remove(file_r)

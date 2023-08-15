@@ -187,5 +187,5 @@ class PoissonRegressionRegressor(
             number_of_threads=self.number_of_threads,
             dense_optimizer=self.dense_optimizer)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

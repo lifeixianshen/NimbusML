@@ -125,5 +125,5 @@ class SsaSpikeDetector(BasePipelineItem, DefaultSignature):
             pvalue_history_length=self.pvalue_history_length,
             error_function=self.error_function)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

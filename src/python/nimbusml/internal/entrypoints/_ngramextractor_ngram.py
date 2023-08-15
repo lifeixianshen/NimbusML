@@ -64,8 +64,6 @@ def n_gram(
                 'Idf',
                 'TfIdf'])
 
-    component = Component(
-        name=entrypoint_name,
-        settings=settings,
-        kind='NgramExtractor')
-    return component
+    return Component(
+        name=entrypoint_name, settings=settings, kind='NgramExtractor'
+    )

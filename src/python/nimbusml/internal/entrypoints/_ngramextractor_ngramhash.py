@@ -76,8 +76,6 @@ def n_gram_hash(
             none_acceptable=True,
             is_of_type=numbers.Real)
 
-    component = Component(
-        name=entrypoint_name,
-        settings=settings,
-        kind='NgramExtractor')
-    return component
+    return Component(
+        name=entrypoint_name, settings=settings, kind='NgramExtractor'
+    )

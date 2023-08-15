@@ -18,8 +18,8 @@ def all_selector_multi_class(
     entrypoint_name = 'AllSelectorMultiClass'
     settings = {}
 
-    component = Component(
+    return Component(
         name=entrypoint_name,
         settings=settings,
-        kind='EnsembleMulticlassSubModelSelector')
-    return component
+        kind='EnsembleMulticlassSubModelSelector',
+    )

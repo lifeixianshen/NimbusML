@@ -79,8 +79,8 @@ class ColumnSelector(BasePipelineItem, NoOutputSignature):
 
         if not isinstance(input_columns, list):
             raise ValueError(
-                "input has to be a list of strings, instead got %s" %
-                type(input_columns))
+                f"input has to be a list of strings, instead got {type(input_columns)}"
+            )
 
         keep_columns = self.keep_columns
         if self.keep_columns is None and self.drop_columns is None:
@@ -92,5 +92,5 @@ class ColumnSelector(BasePipelineItem, NoOutputSignature):
             keep_hidden=self.keep_hidden,
             ignore_missing=self.ignore_missing)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

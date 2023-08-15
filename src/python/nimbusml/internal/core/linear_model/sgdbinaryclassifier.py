@@ -176,5 +176,5 @@ class SgdBinaryClassifier(
             positive_instance_weight=self.positive_instance_weight,
             check_frequency=self.check_frequency)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

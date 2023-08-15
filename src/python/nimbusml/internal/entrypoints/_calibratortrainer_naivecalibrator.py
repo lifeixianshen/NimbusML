@@ -18,8 +18,6 @@ def naive_calibrator(
     entrypoint_name = 'NaiveCalibrator'
     settings = {}
 
-    component = Component(
-        name=entrypoint_name,
-        settings=settings,
-        kind='CalibratorTrainer')
-    return component
+    return Component(
+        name=entrypoint_name, settings=settings, kind='CalibratorTrainer'
+    )

@@ -163,5 +163,5 @@ class SsaForecaster(BasePipelineItem, DefaultSignature):
             discount_factor=self.discount_factor,
             is_adaptive=self.is_adaptive)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

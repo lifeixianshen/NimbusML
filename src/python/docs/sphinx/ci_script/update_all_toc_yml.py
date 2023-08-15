@@ -489,7 +489,7 @@ def createlinktoyaml(m):
     cpath = cpath.replace('-', '_')
     cpath = cpath.replace('modules', r'docs-ref-autogen/nimbusml')
     cpath = cpath.replace('.md', '.yml')
-    return '[{}]({})'.format(cname, cpath)
+    return f'[{cname}]({cpath})'
 
 
 files = [

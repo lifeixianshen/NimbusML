@@ -174,5 +174,5 @@ class SymSgdBinaryClassifier(
             shuffle=self.shuffle,
             positive_instance_weight=self.positive_instance_weight)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

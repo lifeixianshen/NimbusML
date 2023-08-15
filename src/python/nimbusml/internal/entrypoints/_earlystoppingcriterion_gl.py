@@ -31,8 +31,6 @@ def gl(
                 'Max': 1.0,
                 'Min': 0.0})
 
-    component = Component(
-        name=entrypoint_name,
-        settings=settings,
-        kind='EarlyStoppingCriterion')
-    return component
+    return Component(
+        name=entrypoint_name, settings=settings, kind='EarlyStoppingCriterion'
+    )

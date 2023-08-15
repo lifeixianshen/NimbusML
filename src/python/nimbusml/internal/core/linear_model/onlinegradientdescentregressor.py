@@ -209,5 +209,5 @@ class OnlineGradientDescentRegressor(
             initial_weights=self.initial_weights,
             shuffle=self.shuffle)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

@@ -5,8 +5,7 @@ import pandas
 from nimbusml import Pipeline
 from nimbusml.preprocessing.filter import SkipFilter, TakeFilter
 
-df = pandas.DataFrame(data=dict(
-    review=['row' + str(i) for i in range(10)]))
+df = pandas.DataFrame(data=dict(review=[f'row{str(i)}' for i in range(10)]))
 
 # skip the first 5 rows
 print(SkipFilter(count=5).fit_transform(df))

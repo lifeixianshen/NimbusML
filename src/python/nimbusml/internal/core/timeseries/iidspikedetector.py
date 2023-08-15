@@ -87,5 +87,5 @@ class IidSpikeDetector(BasePipelineItem, DefaultSignature):
             side=self.side,
             pvalue_history_length=self.pvalue_history_length)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

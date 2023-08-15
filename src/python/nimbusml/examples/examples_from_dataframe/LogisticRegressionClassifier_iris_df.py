@@ -23,4 +23,4 @@ scores = lr.predict(X_test)
 scores = pd.to_numeric(scores)
 
 # evaluate the model
-print('Accuracy:', np.mean(y_test == [i for i in scores]))
+print('Accuracy:', np.mean(y_test == list(scores)))

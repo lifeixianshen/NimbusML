@@ -18,8 +18,8 @@ def disagreement_diversity_measure(
     entrypoint_name = 'DisagreementDiversityMeasure'
     settings = {}
 
-    component = Component(
+    return Component(
         name=entrypoint_name,
         settings=settings,
-        kind='EnsembleBinaryDiversityMeasure')
-    return component
+        kind='EnsembleBinaryDiversityMeasure',
+    )

@@ -30,8 +30,8 @@ def regression_stacking(
             none_acceptable=True,
             is_of_type=numbers.Real)
 
-    component = Component(
+    return Component(
         name=entrypoint_name,
         settings=settings,
-        kind='EnsembleRegressionOutputCombiner')
-    return component
+        kind='EnsembleRegressionOutputCombiner',
+    )

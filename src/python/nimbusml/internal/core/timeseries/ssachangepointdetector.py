@@ -134,5 +134,5 @@ class SsaChangePointDetector(BasePipelineItem, DefaultSignature):
             martingale=self.martingale,
             power_martingale_epsilon=self.power_martingale_epsilon)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

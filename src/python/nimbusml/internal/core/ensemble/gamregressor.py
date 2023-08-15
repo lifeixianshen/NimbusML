@@ -238,5 +238,5 @@ class GamRegressor(BasePipelineItem, DefaultSignatureWithRoles):
             feature_flocks=self.feature_flocks,
             enable_pruning=self.enable_pruning)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

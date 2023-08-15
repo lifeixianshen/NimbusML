@@ -45,8 +45,8 @@ def best_performance_regression_selector(
             none_acceptable=True,
             is_of_type=numbers.Real)
 
-    component = Component(
+    return Component(
         name=entrypoint_name,
         settings=settings,
-        kind='EnsembleRegressionSubModelSelector')
-    return component
+        kind='EnsembleRegressionSubModelSelector',
+    )

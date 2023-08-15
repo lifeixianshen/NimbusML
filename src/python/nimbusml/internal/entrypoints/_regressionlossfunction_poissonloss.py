@@ -18,8 +18,6 @@ def poisson_loss(
     entrypoint_name = 'PoissonLoss'
     settings = {}
 
-    component = Component(
-        name=entrypoint_name,
-        settings=settings,
-        kind='RegressionLossFunction')
-    return component
+    return Component(
+        name=entrypoint_name, settings=settings, kind='RegressionLossFunction'
+    )

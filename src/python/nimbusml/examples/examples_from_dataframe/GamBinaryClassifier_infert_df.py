@@ -28,4 +28,4 @@ ftree = GamBinaryClassifier().fit(X_train, y_train)
 scores = ftree.predict(X_test)
 
 # evaluate the model
-print('Accuracy:', np.mean(y_test == [i for i in scores]))
+print('Accuracy:', np.mean(y_test == list(scores)))

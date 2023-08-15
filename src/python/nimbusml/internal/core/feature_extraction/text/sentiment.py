@@ -70,5 +70,5 @@ class Sentiment(BasePipelineItem, DefaultSignature):
             source=self.source,
             name=self._name_or_source)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

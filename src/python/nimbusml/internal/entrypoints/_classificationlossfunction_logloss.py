@@ -18,8 +18,8 @@ def log_loss(
     entrypoint_name = 'LogLoss'
     settings = {}
 
-    component = Component(
+    return Component(
         name=entrypoint_name,
         settings=settings,
-        kind='ClassificationLossFunction')
-    return component
+        kind='ClassificationLossFunction',
+    )

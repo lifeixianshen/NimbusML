@@ -253,8 +253,8 @@ class NGramFeaturizer(BasePipelineItem, SingleOutputSignature):
 
         if not isinstance(input_columns, list):
             raise ValueError(
-                "input has to be a list of strings, instead got %s" %
-                type(input_columns))
+                f"input has to be a list of strings, instead got {type(input_columns)}"
+            )
 
         # validate output
         if output_column is None:
@@ -266,12 +266,10 @@ class NGramFeaturizer(BasePipelineItem, SingleOutputSignature):
             output_column = output_column[0]
         if not isinstance(output_column, str):
             raise ValueError(
-                "output has to be a string, instead got %s" %
-                type(output_column))
+                f"output has to be a string, instead got {type(output_column)}"
+            )
 
-        source = []
-        for i in input_columns:
-            source.append(i)
+        source = list(input_columns)
         column = dict(
             [('Source', source), ('Name', output_column)])
 
@@ -289,5 +287,5 @@ class NGramFeaturizer(BasePipelineItem, SingleOutputSignature):
             char_feature_extractor=self.char_feature_extractor,
             vector_normalizer=self.vector_normalizer)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

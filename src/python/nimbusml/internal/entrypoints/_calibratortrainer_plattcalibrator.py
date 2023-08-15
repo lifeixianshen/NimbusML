@@ -18,8 +18,6 @@ def platt_calibrator(
     entrypoint_name = 'PlattCalibrator'
     settings = {}
 
-    component = Component(
-        name=entrypoint_name,
-        settings=settings,
-        kind='CalibratorTrainer')
-    return component
+    return Component(
+        name=entrypoint_name, settings=settings, kind='CalibratorTrainer'
+    )

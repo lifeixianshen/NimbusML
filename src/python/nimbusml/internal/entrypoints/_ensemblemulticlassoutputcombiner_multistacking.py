@@ -30,8 +30,8 @@ def multi_stacking(
             none_acceptable=True,
             is_of_type=numbers.Real)
 
-    component = Component(
+    return Component(
         name=entrypoint_name,
         settings=settings,
-        kind='EnsembleMulticlassOutputCombiner')
-    return component
+        kind='EnsembleMulticlassOutputCombiner',
+    )

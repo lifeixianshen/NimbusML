@@ -18,8 +18,6 @@ def single(
     entrypoint_name = 'Single'
     settings = {}
 
-    component = Component(
-        name=entrypoint_name,
-        settings=settings,
-        kind='ParallelLightGBM')
-    return component
+    return Component(
+        name=entrypoint_name, settings=settings, kind='ParallelLightGBM'
+    )

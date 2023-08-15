@@ -130,7 +130,7 @@ class OneVsRestClassifier(
             normalize_features=self.normalize,
             caching=self.caching)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         node = self.classifier._get_node(**all_args)
         all_args['nodes'] = [node]
         all_args['output_for_sub_graph'] = {

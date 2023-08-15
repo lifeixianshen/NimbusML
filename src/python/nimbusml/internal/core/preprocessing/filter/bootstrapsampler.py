@@ -86,5 +86,5 @@ class BootstrapSampler(BasePipelineItem, DefaultSignature):
             shuffle_input=self.shuffle_input,
             pool_size=self.pool_size)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

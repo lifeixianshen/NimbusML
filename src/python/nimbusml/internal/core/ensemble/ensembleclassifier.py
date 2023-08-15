@@ -231,5 +231,5 @@ class EnsembleClassifier(
             batch_size=self.batch_size,
             show_metrics=self.show_metrics)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

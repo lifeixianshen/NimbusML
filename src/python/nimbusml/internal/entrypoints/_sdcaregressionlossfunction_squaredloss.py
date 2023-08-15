@@ -18,8 +18,8 @@ def squared_loss(
     entrypoint_name = 'SquaredLoss'
     settings = {}
 
-    component = Component(
+    return Component(
         name=entrypoint_name,
         settings=settings,
-        kind='SDCARegressionLossFunction')
-    return component
+        kind='SDCARegressionLossFunction',
+    )

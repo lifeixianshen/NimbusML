@@ -30,5 +30,5 @@ pipe = Pipeline([
 pipe.fit(data)
 schema = pipe.get_output_columns()
 
-print(schema[0:5])
+print(schema[:5])
 # ['Sentiment', 'SentimentText', 'features.Char.<␂>|=|=', 'features.Char.=|=|r', 'features.Char.=|r|u']

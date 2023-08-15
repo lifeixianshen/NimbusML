@@ -25,8 +25,6 @@ def all_instance_selector(
         settings['FeatureSelector'] = try_set(
             obj=feature_selector, none_acceptable=True, is_of_type=dict)
 
-    component = Component(
-        name=entrypoint_name,
-        settings=settings,
-        kind='EnsembleSubsetSelector')
-    return component
+    return Component(
+        name=entrypoint_name, settings=settings, kind='EnsembleSubsetSelector'
+    )

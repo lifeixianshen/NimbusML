@@ -108,8 +108,8 @@ class Resizer(BasePipelineItem, DefaultSignature):
 
         if not isinstance(input_columns, list):
             raise ValueError(
-                "input has to be a list of strings, instead got %s" %
-                type(input_columns))
+                f"input has to be a list of strings, instead got {type(input_columns)}"
+            )
 
         # validate output
         if output_columns is None:
@@ -117,8 +117,8 @@ class Resizer(BasePipelineItem, DefaultSignature):
 
         if not isinstance(output_columns, list):
             raise ValueError(
-                "output has to be a list of strings, instead got %s" %
-                type(output_columns))
+                f"output has to be a list of strings, instead got {type(output_columns)}"
+            )
 
         algo_args = dict(
             column=[
@@ -133,5 +133,5 @@ class Resizer(BasePipelineItem, DefaultSignature):
             resizing=self.resizing,
             crop_anchor=self.crop_anchor)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

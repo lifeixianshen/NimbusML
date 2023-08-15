@@ -18,8 +18,8 @@ def average(
     entrypoint_name = 'Average'
     settings = {}
 
-    component = Component(
+    return Component(
         name=entrypoint_name,
         settings=settings,
-        kind='EnsembleBinaryOutputCombiner')
-    return component
+        kind='EnsembleBinaryOutputCombiner',
+    )

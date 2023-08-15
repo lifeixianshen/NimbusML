@@ -78,14 +78,14 @@ class ColumnConcatenator(BasePipelineItem, MultiOutputsSignature):
 
         if not isinstance(input_columns, list):
             raise ValueError(
-                "input has to be a list of list of strings, instead got %s" %
-                type(input_columns))
+                f"input has to be a list of list of strings, instead got {type(input_columns)}"
+            )
 
         for i in input_columns:
             if not isinstance(i, list):
                 raise ValueError(
-                    "input has to be a list of list strings, instead got input element of type %s" %
-                    type(i))
+                    f"input has to be a list of list strings, instead got input element of type {type(i)}"
+                )
 
         # validate output
         if output_columns is None:
@@ -94,19 +94,17 @@ class ColumnConcatenator(BasePipelineItem, MultiOutputsSignature):
 
         if not isinstance(output_columns, list):
             raise ValueError(
-                "output has to be a list of strings, instead got %s" %
-                type(output_columns))
+                f"output has to be a list of strings, instead got {type(output_columns)}"
+            )
 
         if (len(input_columns) != len(output_columns)):
             raise ValueError(
-                "input and output have to be of same length, instead input %s and output %s" %
-                (len(input_columns), len(output_columns)))
+                f"input and output have to be of same length, instead input {len(input_columns)} and output {len(output_columns)}"
+            )
 
         column = []
         for i in range(len(input_columns)):
-            source = []
-            for ii in input_columns[i]:
-                source.append(ii)
+            source = list(input_columns[i])
             column.append(
                 dict([('Source', source), ('Name', output_columns[i])]))
 
@@ -114,5 +112,5 @@ class ColumnConcatenator(BasePipelineItem, MultiOutputsSignature):
             column=column
         )
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

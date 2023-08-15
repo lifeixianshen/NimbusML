@@ -71,8 +71,7 @@ class BasePredictor(BaseEstimator, BasePipelineItem):
         or else decision values.
         """
         if not self._is_fitted:
-            raise ValueError("Model is not fitted. "
-                             "fit() must be called before {}.".format(method))
+            raise ValueError(f"Model is not fitted. fit() must be called before {method}.")
 
         # Check that the input is of the same shape as the one passed
         # during
@@ -83,8 +82,7 @@ class BasePredictor(BaseEstimator, BasePipelineItem):
         #     X = check_array(X, accept_sparse=['csr'])
 
         pipeline = Pipeline([self], model=self.model_)
-        data = getattr(pipeline, method)(X, **params)
-        return data
+        return getattr(pipeline, method)(X, **params)
 
     @trace
     def get_feature_contributions(self, X, **params):
@@ -107,9 +105,11 @@ class BasePredictor(BaseEstimator, BasePipelineItem):
         """
         data = self._predict(X, **params)
         try:
-            predictions = data['PredictedLabel'] if (
-                        self.type == "classifier" or self.type ==
-                        "clusterer") else data['Score']
+            predictions = (
+                data['PredictedLabel']
+                if self.type in ["classifier", "clusterer"]
+                else data['Score']
+            )
         except KeyError as e:
             raise KeyError(
                 "Type: {0}, unable to find column {1} in {2}".format(
@@ -126,8 +126,7 @@ class BasePredictor(BaseEstimator, BasePipelineItem):
         Checks if this class implements method
         """
         if not hasattr(self, method):
-            raise AttributeError(method + "() is not available for "
-                                 + str(self.__class__))
+            raise AttributeError(f"{method}() is not available for {str(self.__class__)}")
 
     @trace
     def _predict_proba(self, X, **params):

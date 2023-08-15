@@ -18,8 +18,6 @@ def predefined(
     entrypoint_name = 'Predefined'
     settings = {}
 
-    component = Component(
-        name=entrypoint_name,
-        settings=settings,
-        kind='StopWordsRemover')
-    return component
+    return Component(
+        name=entrypoint_name, settings=settings, kind='StopWordsRemover'
+    )

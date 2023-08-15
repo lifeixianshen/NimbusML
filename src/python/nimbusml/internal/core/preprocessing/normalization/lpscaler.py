@@ -66,8 +66,8 @@ class LpScaler(BasePipelineItem, DefaultSignature):
 
         if not isinstance(input_columns, list):
             raise ValueError(
-                "input has to be a list of strings, instead got %s" %
-                type(input_columns))
+                f"input has to be a list of strings, instead got {type(input_columns)}"
+            )
 
         # validate output
         if output_columns is None:
@@ -75,8 +75,8 @@ class LpScaler(BasePipelineItem, DefaultSignature):
 
         if not isinstance(output_columns, list):
             raise ValueError(
-                "output has to be a list of strings, instead got %s" %
-                type(output_columns))
+                f"output has to be a list of strings, instead got {type(output_columns)}"
+            )
 
         algo_args = dict(
             column=[
@@ -89,5 +89,5 @@ class LpScaler(BasePipelineItem, DefaultSignature):
             norm=self.norm,
             sub_mean=self.sub_mean)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

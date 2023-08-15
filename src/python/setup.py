@@ -9,6 +9,7 @@ https://packaging.python.org/en/latest/distributing.html
 https://github.com/pypa/sampleproject
 """
 
+
 # To use a consistent encoding
 from codecs import open
 from os import path
@@ -34,11 +35,8 @@ _install_requires = [
 if sys.version_info.major == 3:
     _install_requires.append('dotnetcore2>=2.1.2')
 
-if sys.version_info[0:2] == (2,7):
-    _install_requires.append('decorator')
-    _install_requires.append('enum')
-    _install_requires.append('funcsigs>=1.0.2')
-
+if sys.version_info[:2] == (2, 7):
+    _install_requires.extend(('decorator', 'enum', 'funcsigs>=1.0.2'))
 setup(
     name='nimbusml',
 

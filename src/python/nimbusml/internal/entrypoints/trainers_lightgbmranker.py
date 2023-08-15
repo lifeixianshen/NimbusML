@@ -279,8 +279,10 @@ def trainers_lightgbmranker(
         x for x in unlist(outputs.values())
         if isinstance(x, str) and x.startswith("$")}
 
-    entrypoint = EntryPoint(
-        name=entrypoint_name, inputs=inputs, outputs=outputs,
+    return EntryPoint(
+        name=entrypoint_name,
+        inputs=inputs,
+        outputs=outputs,
         input_variables=input_variables,
-        output_variables=output_variables)
-    return entrypoint
+        output_variables=output_variables,
+    )

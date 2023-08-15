@@ -445,5 +445,5 @@ class FastTreesTweedieRegressor(
             compress_ensemble=self.compress_ensemble,
             test_frequency=self.test_frequency)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

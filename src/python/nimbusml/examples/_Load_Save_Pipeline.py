@@ -34,10 +34,10 @@ pipe = Pipeline(steps=[("cat", cat), ("ftree", ftree)])
 pipe.fit(X_train, y_train.to_frame())
 
 scores = pipe.predict(X_test)
-print('Accuracy1:', np.mean(y_test == [i for i in scores]))
+print('Accuracy1:', np.mean(y_test == list(scores)))
 
 # Unpickle model and score. We should get the exact same accuracy as above
 s = pickle.dumps(pipe)
 pipe2 = pickle.loads(s)
 scores2 = pipe2.predict(X_test)
-print('Accuracy2:', np.mean(y_test == [i for i in scores2]))
+print('Accuracy2:', np.mean(y_test == list(scores2)))

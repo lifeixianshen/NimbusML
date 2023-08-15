@@ -155,7 +155,7 @@ class Pipeline:
         # it removes attribute mapped to roles: label_column_name,
         # feature_column_name,
         # ...
-        if len(cloned_steps) > 0:
+        if cloned_steps:
             last_node = self.last_node
             if last_node.type != "transform":
                 obj = cloned_steps[-1]
@@ -177,7 +177,7 @@ class Pipeline:
                                     val_pre_fit = obj._columns
                                 elif isinstance(obj._columns,
                                                 dict) and role in \
-                                        obj._columns:
+                                            obj._columns:
                                     val_pre_fit = deepcopy(
                                         obj._columns[role])
                                 else:
@@ -222,13 +222,13 @@ class Pipeline:
             return out
         named_estimators = filter(lambda x: isinstance(x, tuple),
                                   self.steps)
-        out.update(named_estimators)
+        out |= named_estimators
         for name, estimator in named_estimators:
             if estimator is None:
                 continue
             for key, value in six.iteritems(
                     estimator.get_params(deep=True)):
-                out['%s__%s' % (name, key)] = value
+                out[f'{name}__{key}'] = value
         return out
 
     def set_params(self, **params):
@@ -256,7 +256,7 @@ class Pipeline:
                     else:
                         new_steps.append(s)
                 if not found:
-                    raise ValueError("step %s is not defined" % key)
+                    raise ValueError(f"step {key} is not defined")
                 self.steps = new_steps
 
         valid_params = self.get_params(deep=True)
@@ -289,9 +289,9 @@ class Pipeline:
 
     @trace
     def _validate_steps(self, steps):
-        step_names = set()
         if len(steps) <= 0:
             raise TypeError("No steps given.")
+        step_names = set()
         for i, s in enumerate(steps):
             if isinstance(s, tuple):
                 # pipeline step
@@ -299,21 +299,17 @@ class Pipeline:
                 step_name = s[0]
                 if step_name and not isinstance(step_name, str):
                     raise TypeError(
-                        "All step names should be of string type. "
-                        " '%s' (type %s) isn't" %
-                        (step_name, type(step_name)))
+                        f"All step names should be of string type.  '{step_name}' (type {type(step_name)}) isn't"
+                    )
                 if step_name in step_names:
-                    raise TypeError(
-                        "All step names should be unique. '%s' isn't" %
-                        (step_name))
+                    raise TypeError(f"All step names should be unique. '{step_name}' isn't")
                 step_names.add(step_name)
             else:
                 obj = s
             if not isinstance(obj, BasePipelineItem):
                 raise TypeError(
-                    "All steps should be of BasePipelineItem type. "
-                    " '%s' (type %s) isn't" %
-                    (obj, type(obj)))
+                    f"All steps should be of BasePipelineItem type.  '{obj}' (type {type(obj)}) isn't"
+                )
             if not hasattr(obj, 'type'):
                 raise AttributeError(
                     "Type is missing in node {0}".format(s))
@@ -343,10 +339,7 @@ class Pipeline:
         """Tells if the pipeline is supervisez or not.
         It returns None if the model was not trained, a boolean
         otherwise."""
-        if self.steps is None:
-            return None
-        node_type = self.last_node.type
-        return node_type != 'transform'
+        return None if self.steps is None else self.last_node.type != 'transform'
 
     def _preprocess_X_y(self, X, y=None, w=None):
         """
@@ -378,7 +371,7 @@ class Pipeline:
         # before calling it.
         if isinstance(X, DataFrame):
             if (X.columns.dtype == 'int64'):
-                feature_columns = ['F' + str(x) for x in X.columns]
+                feature_columns = [f'F{str(x)}' for x in X.columns]
                 X.columns = feature_columns
             else:
                 feature_columns = list(X.columns)
@@ -418,8 +411,7 @@ class Pipeline:
         if isinstance(X, np.ndarray):
             X = DataFrame(X)
             if feature_columns is None:
-                feature_columns = ['F' + str(x) for x in
-                                   range(0, X.shape[1])]
+                feature_columns = [f'F{str(x)}' for x in range(0, X.shape[1])]
                 columns_renamed = True
             X.columns = feature_columns
 
@@ -541,7 +533,7 @@ class Pipeline:
                     "1}).".format(type(X), type(y)))
 
         return X, y, columns_renamed, feature_columns, label_column, \
-            schema, w, weight_column
+                schema, w, weight_column
 
     def _init_graph_nodes(
             self,
@@ -606,16 +598,16 @@ class Pipeline:
             output_model=output_model,
             strategy_iosklearn=strategy_iosklearn)
 
-        for node in enumerate([n for n in transform_nodes
-                               if n.name == 'Models.DatasetTransformer']):
-            input_name = 'dataset_transformer_model' + str(node[0])
+        for node in enumerate(n for n in transform_nodes
+                                   if n.name == 'Models.DatasetTransformer'):
+            input_name = f'dataset_transformer_model{str(node[0])}'
             inputs[input_name] = node[1].inputs['TransformModel']
             node[1].inputs['TransformModel'] = '$' + input_name
             node[1].input_variables.add(node[1].inputs['TransformModel'])
 
         graph_nodes['transform_nodes'] = transform_nodes
         return graph_nodes, feature_columns, inputs, transform_nodes, \
-            columns_out
+                columns_out
 
     def _update_graph_nodes_for_learner(
             self,
@@ -630,107 +622,104 @@ class Pipeline:
             y,
             strategy_iosklearn):
         last_node = self.last_node  # could be predictor or transformer
-        if last_node.type != 'transform':  # last node is predictor
-            if hasattr(
+        if last_node.type == 'transform':
+            return graph_nodes, None, None
+        if hasattr(
                     last_node,
                     'feature_column_name') and last_node.feature_column_name is \
-                    not None:
-                if isinstance(last_node.feature_column_name, list):
-                    learner_features = last_node.feature_column_name
-                    last_node.feature_column_name = 'Features'
-                else:
-                    learner_features = [last_node.feature_column_name]
-            elif strategy_iosklearn in ("previous", "accumulate"):
-                if hasattr(
+                        not None:
+            if isinstance(last_node.feature_column_name, list):
+                learner_features = last_node.feature_column_name
+                last_node.feature_column_name = 'Features'
+            else:
+                learner_features = [last_node.feature_column_name]
+        elif strategy_iosklearn in ("previous", "accumulate"):
+            if hasattr(
                         last_node,
                         'feature') and last_node.feature is not None:
-                    if isinstance(last_node.feature, list):
-                        learner_features = last_node.feature
-                    else:
-                        learner_features = [last_node.feature]
-                    last_node.feature_column_name = 'Features'
-                elif isinstance(columns_out, list):
-                    learner_features = columns_out
-                    last_node.feature_column_name = 'Features'
-                elif columns_out is None:
-                    learner_features = ['Features']
-                    last_node.feature_column_name = 'Features'
-                else:
-                    learner_features = [columns_out]
-                    last_node.feature_column_name = 'Features'
+                learner_features = (
+                    last_node.feature
+                    if isinstance(last_node.feature, list)
+                    else [last_node.feature]
+                )
+            elif isinstance(columns_out, list):
+                learner_features = columns_out
+            elif columns_out is None:
+                learner_features = ['Features']
             else:
-                raise NotImplementedError(
-                    "Strategy '{0}' to handle unspecified inputs is not "
-                    "implemented".format(strategy_iosklearn))
-
-            if label_column is not None or last_node._use_role(Role.Label):
-                if getattr(last_node, 'label_column_name_', None):
-                    label_column = last_node.label_column_name_
-                elif getattr(last_node, 'label_column_name', None):
-                    label_column = last_node.label_column_name
-                elif label_column:
-                    last_node.label_column_name = label_column
-                elif y is None:
-                    if label_column is None:
-                        label_column = Role.Label
-                    last_node.label_column_name = label_column
-                else:
-                    label_column = _extract_label_column(
-                        last_node, DataSchema.read_schema(y))
-                    if label_column is None:
-                        label_column = Role.Label
-                    last_node.label_column_name = label_column
-            else:
-                last_node.label_column_name = None
-                label_column = None
-
-            if weight_column is not None or last_node._use_role(Role.Weight):
-                if getattr(last_node, 'example_weight_column_name', None):
-                    weight_column = last_node.example_weight_column_name
-                elif weight_column:
-                    last_node.example_weight_column_name = weight_column
-            else:
-                last_node.example_weight_column_name = None
-                weight_column = None
-
-            if (hasattr(last_node, 'row_group_column_name_')
-                    and last_node.row_group_column_name_ is not None):
-                group_id_column = last_node.row_group_column_name_
-            elif (hasattr(last_node, 'row_group_column_name') and
-                  last_node.row_group_column_name is not None):
-                group_id_column = last_node.row_group_column_name
-            else:
-                group_id_column = None
-
-            # Training.
-            implicit_nodes = self._process_learner(
-                learner=last_node,
-                features=learner_features,
-                label=label_column,
-                weight=weight_column,
-                num_transforms=len(transform_nodes),
-                output_data=output_data,
-                output_model=output_model)
-            graph_nodes['implicit_nodes'] = implicit_nodes
-
-            # Check roles
-            last_node._check_roles()
-
-            # todo: ideally all the nodes have the same name for params
-            # so we dont have to distinguish if its learner or
-            # transformer. We will supply input_data, output_data and
-            # output_model vars. Its up to node to use suplied vars.
-            learner_node = last_node._get_node(
-                feature_column_name=learner_features,
-                training_data=output_data,
-                predictor_model=predictor_model,
-                label_column_name=label_column,
-                example_weight_column_name=weight_column,
-                row_group_column_name=group_id_column)
-            graph_nodes['learner_node'] = [learner_node]
-            return graph_nodes, learner_node, learner_features
+                learner_features = [columns_out]
+            last_node.feature_column_name = 'Features'
         else:
-            return graph_nodes, None, None
+            raise NotImplementedError(
+                "Strategy '{0}' to handle unspecified inputs is not "
+                "implemented".format(strategy_iosklearn))
+
+        if label_column is not None or last_node._use_role(Role.Label):
+            if getattr(last_node, 'label_column_name_', None):
+                label_column = last_node.label_column_name_
+            elif getattr(last_node, 'label_column_name', None):
+                label_column = last_node.label_column_name
+            elif label_column:
+                last_node.label_column_name = label_column
+            elif y is None:
+                if label_column is None:
+                    label_column = Role.Label
+                last_node.label_column_name = label_column
+            else:
+                label_column = _extract_label_column(
+                    last_node, DataSchema.read_schema(y))
+                if label_column is None:
+                    label_column = Role.Label
+                last_node.label_column_name = label_column
+        else:
+            last_node.label_column_name = None
+            label_column = None
+
+        if weight_column is not None or last_node._use_role(Role.Weight):
+            if getattr(last_node, 'example_weight_column_name', None):
+                weight_column = last_node.example_weight_column_name
+            elif weight_column:
+                last_node.example_weight_column_name = weight_column
+        else:
+            last_node.example_weight_column_name = None
+            weight_column = None
+
+        if (hasattr(last_node, 'row_group_column_name_')
+                and last_node.row_group_column_name_ is not None):
+            group_id_column = last_node.row_group_column_name_
+        elif (hasattr(last_node, 'row_group_column_name') and
+              last_node.row_group_column_name is not None):
+            group_id_column = last_node.row_group_column_name
+        else:
+            group_id_column = None
+
+        # Training.
+        implicit_nodes = self._process_learner(
+            learner=last_node,
+            features=learner_features,
+            label=label_column,
+            weight=weight_column,
+            num_transforms=len(transform_nodes),
+            output_data=output_data,
+            output_model=output_model)
+        graph_nodes['implicit_nodes'] = implicit_nodes
+
+        # Check roles
+        last_node._check_roles()
+
+        # todo: ideally all the nodes have the same name for params
+        # so we dont have to distinguish if its learner or
+        # transformer. We will supply input_data, output_data and
+        # output_model vars. Its up to node to use suplied vars.
+        learner_node = last_node._get_node(
+            feature_column_name=learner_features,
+            training_data=output_data,
+            predictor_model=predictor_model,
+            label_column_name=label_column,
+            example_weight_column_name=weight_column,
+            row_group_column_name=group_id_column)
+        graph_nodes['learner_node'] = [learner_node]
+        return graph_nodes, learner_node, learner_features
 
     def _fit_graph(self, X, y, verbose, **params):
         # start the clock!

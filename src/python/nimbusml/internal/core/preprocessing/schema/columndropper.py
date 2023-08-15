@@ -62,8 +62,8 @@ class ColumnDropper(BasePipelineItem, NoOutputSignature):
 
         if not isinstance(input_columns, list):
             raise ValueError(
-                "input has to be a list of strings, instead got %s" %
-                type(input_columns))
+                f"input has to be a list of strings, instead got {type(input_columns)}"
+            )
 
         algo_args = dict(
             column=input_columns,
@@ -72,5 +72,5 @@ class ColumnDropper(BasePipelineItem, NoOutputSignature):
             keep_hidden=False,
             ignore_missing=False)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

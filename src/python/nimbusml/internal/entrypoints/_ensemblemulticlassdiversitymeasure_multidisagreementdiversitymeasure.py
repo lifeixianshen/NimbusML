@@ -18,8 +18,8 @@ def multi_disagreement_diversity_measure(
     entrypoint_name = 'MultiDisagreementDiversityMeasure'
     settings = {}
 
-    component = Component(
+    return Component(
         name=entrypoint_name,
         settings=settings,
-        kind='EnsembleMulticlassDiversityMeasure')
-    return component
+        kind='EnsembleMulticlassDiversityMeasure',
+    )

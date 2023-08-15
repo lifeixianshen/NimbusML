@@ -139,7 +139,7 @@ class KMeansPlusPlus(BasePipelineItem, DefaultSignatureWithRoles):
             maximum_number_of_iterations=self.maximum_number_of_iterations,
             accel_mem_budget_mb=self.accel_mem_budget_mb)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)
 
     @trace

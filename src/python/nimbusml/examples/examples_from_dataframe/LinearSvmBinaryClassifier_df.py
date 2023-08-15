@@ -28,4 +28,4 @@ lr = LinearSvmBinaryClassifier().fit(X_train, y_train)
 scores = lr.predict(X_test)
 
 # Evaluate the model
-print('Accuracy:', np.mean(y_test == [i for i in scores]))
+print('Accuracy:', np.mean(y_test == list(scores)))

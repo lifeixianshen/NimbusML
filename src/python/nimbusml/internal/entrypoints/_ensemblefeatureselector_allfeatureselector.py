@@ -18,8 +18,6 @@ def all_feature_selector(
     entrypoint_name = 'AllFeatureSelector'
     settings = {}
 
-    component = Component(
-        name=entrypoint_name,
-        settings=settings,
-        kind='EnsembleFeatureSelector')
-    return component
+    return Component(
+        name=entrypoint_name, settings=settings, kind='EnsembleFeatureSelector'
+    )

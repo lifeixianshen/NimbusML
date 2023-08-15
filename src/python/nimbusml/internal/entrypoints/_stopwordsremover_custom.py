@@ -25,8 +25,6 @@ def custom(
         settings['Stopword'] = try_set(
             obj=stopword, none_acceptable=True, is_of_type=list)
 
-    component = Component(
-        name=entrypoint_name,
-        settings=settings,
-        kind='StopWordsRemover')
-    return component
+    return Component(
+        name=entrypoint_name, settings=settings, kind='StopWordsRemover'
+    )

@@ -221,5 +221,5 @@ class FastLinearClassifier(
             convergence_check_frequency=self.convergence_check_frequency,
             bias_learning_rate=self.bias_learning_rate)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

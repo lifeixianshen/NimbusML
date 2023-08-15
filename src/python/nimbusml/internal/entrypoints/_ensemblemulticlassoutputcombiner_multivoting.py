@@ -18,8 +18,8 @@ def multi_voting(
     entrypoint_name = 'MultiVoting'
     settings = {}
 
-    component = Component(
+    return Component(
         name=entrypoint_name,
         settings=settings,
-        kind='EnsembleMulticlassOutputCombiner')
-    return component
+        kind='EnsembleMulticlassOutputCombiner',
+    )

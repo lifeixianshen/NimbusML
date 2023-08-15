@@ -29,8 +29,6 @@ def tr(
             none_acceptable=True,
             is_of_type=numbers.Real, valid_range={'Min': 0.0})
 
-    component = Component(
-        name=entrypoint_name,
-        settings=settings,
-        kind='EarlyStoppingCriterion')
-    return component
+    return Component(
+        name=entrypoint_name, settings=settings, kind='EarlyStoppingCriterion'
+    )

@@ -18,8 +18,6 @@ def pav_calibrator(
     entrypoint_name = 'PavCalibrator'
     settings = {}
 
-    component = Component(
-        name=entrypoint_name,
-        settings=settings,
-        kind='CalibratorTrainer')
-    return component
+    return Component(
+        name=entrypoint_name, settings=settings, kind='CalibratorTrainer'
+    )

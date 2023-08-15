@@ -51,5 +51,5 @@ class TakeFilter(BasePipelineItem, NoOutputSignature):
         algo_args = dict(
             count=self.count)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

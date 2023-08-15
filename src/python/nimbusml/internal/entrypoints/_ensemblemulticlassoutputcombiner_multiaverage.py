@@ -26,8 +26,8 @@ def multi_average(
         settings['Normalize'] = try_set(
             obj=normalize, none_acceptable=True, is_of_type=bool)
 
-    component = Component(
+    return Component(
         name=entrypoint_name,
         settings=settings,
-        kind='EnsembleMulticlassOutputCombiner')
-    return component
+        kind='EnsembleMulticlassOutputCombiner',
+    )

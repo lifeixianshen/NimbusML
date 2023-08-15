@@ -84,9 +84,7 @@ class RangeFilter(BasePipelineItem, SingleInputAsStringSignature):
                 "'None' input passed when it cannot be none.")
 
         if not isinstance(input_column, str):
-            raise ValueError(
-                "input has to be a string, instead got %s" %
-                type(input_column))
+            raise ValueError(f"input has to be a string, instead got {type(input_column)}")
 
         algo_args = dict(
             column=input_column,
@@ -96,5 +94,5 @@ class RangeFilter(BasePipelineItem, SingleInputAsStringSignature):
             include_min=self.include_min,
             include_max=self.include_max)
 
-        all_args.update(algo_args)
+        all_args |= algo_args
         return self._entrypoint(**all_args)

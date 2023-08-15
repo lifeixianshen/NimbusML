@@ -18,8 +18,8 @@ def median(
     entrypoint_name = 'Median'
     settings = {}
 
-    component = Component(
+    return Component(
         name=entrypoint_name,
         settings=settings,
-        kind='EnsembleRegressionOutputCombiner')
-    return component
+        kind='EnsembleRegressionOutputCombiner',
+    )

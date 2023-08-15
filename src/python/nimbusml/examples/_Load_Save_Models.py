@@ -28,10 +28,10 @@ X_train, X_test, y_train, y_test = \
 # train model and see accuracy
 ftree = FastTreesBinaryClassifier().fit(X_train, y_train)
 scores = ftree.predict(X_test)
-print('Accuracy1:', np.mean(y_test == [i for i in scores]))
+print('Accuracy1:', np.mean(y_test == list(scores)))
 
 # Unpickle model and score. We should get the exact same accuracy as above
 s = pickle.dumps(ftree)
 ftree2 = pickle.loads(s)
 scores2 = ftree2.predict(X_test)
-print('Accuracy2:', np.mean(y_test == [i for i in scores2]))
+print('Accuracy2:', np.mean(y_test == list(scores2)))
